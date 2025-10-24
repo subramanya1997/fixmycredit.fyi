@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { AnalyticsWrapper } from "@/components/analytics/analytics-wrapper";
 import { OrganizationSchema } from "@/components/seo/organization-schema";
 import { LocalBusinessSchema } from "@/components/seo/local-business-schema";
+import { ErrorSuppressor } from "@/components/error-suppressor";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -74,6 +75,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ErrorSuppressor />
         {children}
         <Analytics />
         <AnalyticsWrapper />

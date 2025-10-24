@@ -71,6 +71,14 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href="/blog"
+                  className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                >
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a
                   href="#waitlist"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
@@ -88,7 +96,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href="#"
+                  href="/privacy"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Privacy Policy
@@ -96,7 +104,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/terms"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Terms of Service
@@ -104,7 +112,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/disclaimer"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Disclaimer

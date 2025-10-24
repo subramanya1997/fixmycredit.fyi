@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { PortableText } from '@portabletext/react';
+import { ArrowRight } from 'lucide-react';
 import { getBlogPostBySlug, getRelatedPosts, getAllPostsForSitemap } from '@/lib/sanity/queries';
 import { urlFor } from '@/lib/sanity/client';
 import { siteConfig } from '@/lib/config/site';
@@ -10,6 +11,7 @@ import { formatDate, calculateReadingTime } from '@/lib/utils/blog-helpers';
 import { portableTextComponents } from '@/components/blog/portable-text-components';
 import { SocialShare } from '@/components/blog/social-share';
 import { StructuredData } from '@/components/seo/structured-data';
+import { Header } from '@/components/marketing/header';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -20,8 +22,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await getBlogPostBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
   
   if (!post) {
     return {
@@ -42,7 +45,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       type: 'article',
       title,
       description,
-      url: `${siteConfig.domain.url}/blog/${params.slug}`,
+      url: `${siteConfig.domain.url}/blog/${slug}`,
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt || post.publishedAt,
       authors: [post.author.name],
@@ -55,13 +58,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: imageUrl ? [imageUrl] : undefined,
     },
     alternates: {
-      canonical: `${siteConfig.domain.url}/blog/${params.slug}`,
+      canonical: `${siteConfig.domain.url}/blog/${slug}`,
     },
   };
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getBlogPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
   
   if (!post) {
     notFound();
@@ -76,27 +80,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <StructuredData post={post} />
 
       <div className="min-h-screen bg-white dark:bg-slate-900">
-        {/* Header */}
-        <header className="border-b border-slate-200 dark:border-slate-800">
-          <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="text-2xl font-bold text-slate-900 dark:text-white">
-                {siteConfig.branding.name}
-              </Link>
-              <nav className="flex gap-6">
-                <Link href="/" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                  Home
-                </Link>
-                <Link href="/blog" className="text-slate-900 dark:text-white font-medium">
-                  Blog
-                </Link>
-                <Link href="/#waitlist" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                  Join Waitlist
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         {/* Article Header */}
         <article className="mx-auto max-w-4xl px-6 py-16 lg:px-8">
@@ -116,19 +100,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {/* Categories */}
           {post.categories && post.categories.length > 0 && (
             <div className="flex gap-2 mb-6">
-              {post.categories.map((category: any) => (
-                <Link
-                  key={category._id}
-                  href={`/blog/category/${category.slug.current}`}
-                  className="text-sm font-medium px-3 py-1 rounded"
-                  style={{
-                    backgroundColor: category.color || '#e2e8f0',
-                    color: '#000',
-                  }}
-                >
-                  {category.title}
-                </Link>
-              ))}
+              {post.categories.map((category: any, index: number) => {
+                const bgColor = category.color || '#e2e8f0';
+                return (
+                  <Link
+                    key={category._id || category.slug?.current || index}
+                    href={`/blog/category/${category.slug.current}`}
+                    className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                    style={{ borderLeftColor: bgColor, borderLeftWidth: '3px' }}
+                  >
+                    {category.title}
+                  </Link>
+                );
+              })}
             </div>
           )}
 
@@ -192,7 +176,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 {post.tags.map((tag: string) => (
                   <span
                     key={tag}
-                    className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white px-3 py-1 rounded-full text-sm"
+                    className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                   >
                     #{tag}
                   </span>
@@ -204,7 +188,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {/* Social Share */}
           <div className="mt-8">
             <SocialShare
-              url={`${siteConfig.domain.url}/blog/${params.slug}`}
+              url={`${siteConfig.domain.url}/blog/${slug}`}
               title={post.title}
               description={post.excerpt}
             />
@@ -258,6 +242,27 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     )}
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="mt-16 rounded-lg border border-slate-200 bg-slate-50 p-8 dark:border-slate-800 dark:bg-slate-900">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                Ready to Improve Your Credit Score?
+              </h3>
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+                Join our waitlist to get early access to professional-grade credit repair tools and AI-powered insights.
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="/#waitlist"
+                  className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                >
+                  Join Waitlist
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>

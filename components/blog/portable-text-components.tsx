@@ -33,6 +33,30 @@ export const portableTextComponents: PortableTextComponents = {
         </pre>
       );
     },
+    table: ({ value }) => {
+      if (!value?.rows) return null;
+      
+      return (
+        <div className="my-8 overflow-x-auto">
+          <table className="w-full border-collapse border border-slate-300 dark:border-slate-700">
+            <tbody>
+              {value.rows.map((row: any, rowIndex: number) => (
+                <tr key={rowIndex} className="border-b border-slate-300 dark:border-slate-700">
+                  {row.cells?.map((cell: string, cellIndex: number) => (
+                    <td
+                      key={cellIndex}
+                      className="border border-slate-300 px-4 py-2 text-sm text-slate-700 dark:border-slate-700 dark:text-slate-300"
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
   },
   marks: {
     link: ({ children, value }) => {

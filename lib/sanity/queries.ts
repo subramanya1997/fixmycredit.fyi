@@ -103,7 +103,9 @@ export async function getFeaturedPosts(limit = 3) {
     slug,
     excerpt,
     mainImage,
+    content,
     "author": author->{name, slug},
+    "categories": categories[]->{title, slug, color},
     publishedAt
   }`;
   

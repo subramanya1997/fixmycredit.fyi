@@ -22,18 +22,18 @@ export function HeroSection() {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-32 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/50 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-emerald-700 dark:border-emerald-800/50 dark:bg-emerald-950/50 dark:text-emerald-300">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
             <Sparkles className="h-3.5 w-3.5" />
             Early Access Available
           </div>
 
           {/* Main headline */}
-          <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
             {siteConfig.branding.tagline}
           </h1>
 
           {/* Subheadline */}
-          <p className="mb-10 text-lg leading-relaxed text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="mb-10 text-base leading-relaxed text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Data-driven credit repair platform with AI-powered insights and professional dispute tools. Start improving your credit score today.
           </p>
 
@@ -41,26 +41,26 @@ export function HeroSection() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={scrollToWaitlist}
-              className="group relative inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] dark:bg-white dark:text-slate-900"
+              className="group inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
             >
               Join Waitlist
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-8 pt-8 border-t border-slate-200 dark:border-slate-800">
+          <div className="mt-12 grid grid-cols-3 gap-8 pt-8 border-t border-slate-200 dark:border-slate-800">
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">On Waitlist</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">500+</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">On Waitlist</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">10K+</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Simulations</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">10K+</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Simulations</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">$15</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Per Month</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">$15</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Per Month</div>
             </div>
           </div>
         </div>

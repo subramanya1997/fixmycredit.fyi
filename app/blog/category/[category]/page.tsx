@@ -7,6 +7,7 @@ import { urlFor } from '@/lib/sanity/client';
 import { siteConfig } from '@/lib/config/site';
 import { formatDate, calculateReadingTime } from '@/lib/utils/blog-helpers';
 import { BlogPost } from '@/lib/sanity/types';
+import { Header } from '@/components/marketing/header';
 
 export const revalidate = 3600;
 
@@ -17,8 +18,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
-  const category = await getCategoryBySlug(params.category);
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+  const { category: categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
   
   if (!category) {
     return {
@@ -32,15 +34,16 @@ export async function generateMetadata({ params }: { params: { category: string 
     openGraph: {
       title: `${category.title} - Credit Repair Blog`,
       description: category.description,
-      url: `${siteConfig.domain.url}/blog/category/${params.category}`,
+      url: `${siteConfig.domain.url}/blog/category/${categorySlug}`,
     },
   };
 }
 
-export default async function CategoryPage({ params }: { params: { category: string } }) {
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+  const { category: categorySlug } = await params;
   const [category, posts] = await Promise.all([
-    getCategoryBySlug(params.category),
-    getBlogPostsByCategory(params.category),
+    getCategoryBySlug(categorySlug),
+    getBlogPostsByCategory(categorySlug),
   ]);
   
   if (!category) {
@@ -49,30 +52,10 @@ export default async function CategoryPage({ params }: { params: { category: str
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900">
-      {/* Header */}
-      <header className="border-b border-slate-200 dark:border-slate-800">
-        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-slate-900 dark:text-white">
-              {siteConfig.branding.name}
-            </Link>
-            <nav className="flex gap-6">
-              <Link href="/" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                Home
-              </Link>
-              <Link href="/blog" className="text-slate-900 dark:text-white font-medium">
-                Blog
-              </Link>
-              <Link href="/#waitlist" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                Join Waitlist
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Category Header */}
-      <section className="bg-gradient-to-b from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 py-16">
+      <section className="border-b border-slate-200 bg-slate-50 py-12 dark:border-slate-800 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <nav className="mb-6 text-sm text-slate-600 dark:text-slate-400">
             <Link href="/" className="hover:text-slate-900 dark:hover:text-white">

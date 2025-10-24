@@ -7,6 +7,7 @@ import { urlFor } from '@/lib/sanity/client';
 import { siteConfig } from '@/lib/config/site';
 import { formatDate, calculateReadingTime } from '@/lib/utils/blog-helpers';
 import { BlogPost } from '@/lib/sanity/types';
+import { Header } from '@/components/marketing/header';
 
 export const revalidate = 3600;
 
@@ -17,8 +18,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { author: string } }): Promise<Metadata> {
-  const author = await getAuthorBySlug(params.author);
+export async function generateMetadata({ params }: { params: Promise<{ author: string }> }): Promise<Metadata> {
+  const { author: authorSlug } = await params;
+  const author = await getAuthorBySlug(authorSlug);
   
   if (!author) {
     return {
@@ -32,15 +34,16 @@ export async function generateMetadata({ params }: { params: { author: string } 
     openGraph: {
       title: `${author.name} - Credit Repair Expert`,
       description: author.bio,
-      url: `${siteConfig.domain.url}/blog/author/${params.author}`,
+      url: `${siteConfig.domain.url}/blog/author/${authorSlug}`,
     },
   };
 }
 
-export default async function AuthorPage({ params }: { params: { author: string } }) {
+export default async function AuthorPage({ params }: { params: Promise<{ author: string }> }) {
+  const { author: authorSlug } = await params;
   const [author, posts] = await Promise.all([
-    getAuthorBySlug(params.author),
-    getBlogPostsByAuthor(params.author),
+    getAuthorBySlug(authorSlug),
+    getBlogPostsByAuthor(authorSlug),
   ]);
   
   if (!author) {
@@ -49,30 +52,10 @@ export default async function AuthorPage({ params }: { params: { author: string 
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900">
-      {/* Header */}
-      <header className="border-b border-slate-200 dark:border-slate-800">
-        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-slate-900 dark:text-white">
-              {siteConfig.branding.name}
-            </Link>
-            <nav className="flex gap-6">
-              <Link href="/" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                Home
-              </Link>
-              <Link href="/blog" className="text-slate-900 dark:text-white font-medium">
-                Blog
-              </Link>
-              <Link href="/#waitlist" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                Join Waitlist
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Author Header */}
-      <section className="bg-gradient-to-b from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 py-16">
+      <section className="border-b border-slate-200 bg-slate-50 py-12 dark:border-slate-800 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <nav className="mb-6 text-sm text-slate-600 dark:text-slate-400">
             <Link href="/" className="hover:text-slate-900 dark:hover:text-white">
@@ -115,7 +98,7 @@ export default async function AuthorPage({ params }: { params: { author: string 
                   {author.credentials.map((credential: string) => (
                     <span
                       key={credential}
-                      className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm"
+                      className="rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300"
                     >
                       {credential}
                     </span>

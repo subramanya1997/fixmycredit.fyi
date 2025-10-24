@@ -124,6 +124,11 @@ export const blogPost = defineType({
           name: 'code',
           title: 'Code Block',
         },
+        {
+          type: 'table',
+          name: 'table',
+          title: 'Table',
+        },
       ],
     }),
     defineField({
@@ -187,6 +192,24 @@ export const blogPost = defineType({
       },
       initialValue: 'Article',
     }),
+    defineField({
+      name: 'orderRank',
+      title: 'Order Rank',
+      type: 'string',
+      hidden: true,
+    }),
+  ],
+  orderings: [
+    {
+      title: 'Manual Order',
+      name: 'manualOrder',
+      by: [{ field: 'orderRank', direction: 'asc' }],
+    },
+    {
+      title: 'Published Date, New',
+      name: 'publishedAtDesc',
+      by: [{ field: 'publishedAt', direction: 'desc' }],
+    },
   ],
   preview: {
     select: {
