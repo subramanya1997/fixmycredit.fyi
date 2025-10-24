@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/marketing/hero-section";
 import { FeaturesSection } from "@/components/marketing/features-section";
 import { PricingSection } from "@/components/marketing/pricing-section";
 import { WaitlistForm } from "@/components/marketing/waitlist-form";
+import { BlogCTA } from "@/components/marketing/blog-cta";
 import { Footer } from "@/components/marketing/footer";
 
 export default function Home() {
@@ -12,6 +13,9 @@ export default function Home() {
 
       {/* Features Section */}
       <FeaturesSection />
+
+      {/* Blog CTA */}
+      <BlogCTA />
 
       {/* Pricing Section */}
       <PricingSection />
