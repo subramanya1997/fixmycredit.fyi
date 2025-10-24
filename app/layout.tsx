@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { siteConfig } from "@/lib/config/site";
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { AnalyticsWrapper } from "@/components/analytics/analytics-wrapper";
 import { OrganizationSchema } from "@/components/seo/organization-schema";
 import { LocalBusinessSchema } from "@/components/seo/local-business-schema";
 import "./globals.css";
@@ -67,12 +69,14 @@ export default function RootLayout({
       <head>
         <OrganizationSchema />
         <LocalBusinessSchema />
+        <GoogleAnalytics />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <Analytics />
+        <AnalyticsWrapper />
       </body>
     </html>
   );

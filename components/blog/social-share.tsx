@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
+import { trackShare } from '@/lib/analytics/gtag';
 
 interface SocialShareProps {
   url: string;
@@ -35,11 +36,16 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
           text: description,
           url,
         });
+        trackShare('native_share', url);
       } catch (error) {
         // User cancelled share or error occurred
         console.log('Share cancelled');
       }
     }
+  };
+
+  const handleShareClick = (platform: string) => {
+    trackShare(platform, url);
   };
 
   return (
@@ -53,6 +59,7 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             href={shareLinks.twitter}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleShareClick('twitter')}
             className="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-600 hover:text-white transition-colors"
             aria-label="Share on Twitter"
           >
@@ -63,6 +70,7 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             href={shareLinks.reddit}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleShareClick('reddit')}
             className="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-orange-600 hover:text-white transition-colors"
             aria-label="Share on Reddit"
           >
@@ -73,6 +81,7 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             href={shareLinks.facebook}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleShareClick('facebook')}
             className="hidden sm:flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-700 hover:text-white transition-colors"
             aria-label="Share on Facebook"
           >
@@ -83,6 +92,7 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             href={shareLinks.linkedin}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleShareClick('linkedin')}
             className="hidden sm:flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-800 hover:text-white transition-colors"
             aria-label="Share on LinkedIn"
           >

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { waitlistSchema, type WaitlistFormData } from "@/lib/validations";
+import { trackWaitlistSignup } from "@/lib/analytics/gtag";
 
 export function WaitlistForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,6 +50,9 @@ export function WaitlistForm() {
       // Success!
       setIsSuccess(true);
       reset();
+      
+      // Track conversion in Google Analytics
+      trackWaitlistSignup(data.email);
     } catch (error) {
       console.error("Error submitting waitlist form:", error);
       setErrorMessage("Failed to submit. Please try again.");
