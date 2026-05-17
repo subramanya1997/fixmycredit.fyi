@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
 import { trackShare } from '@/lib/analytics/gtag';
 
@@ -11,15 +10,9 @@ interface SocialShareProps {
 }
 
 export function SocialShare({ url, title, description }: SocialShareProps) {
-  const [canShare, setCanShare] = useState(false);
-
-  useEffect(() => {
-    setCanShare(typeof navigator !== 'undefined' && 'share' in navigator);
-  }, []);
-
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
-  const encodedDescription = description ? encodeURIComponent(description) : '';
+  const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
@@ -37,7 +30,7 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
           url,
         });
         trackShare('native_share', url);
-      } catch (error) {
+      } catch {
         // User cancelled share or error occurred
         console.log('Share cancelled');
       }
@@ -60,6 +53,8 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleShareClick('twitter')}
+            data-analytics-event="share_click"
+            data-analytics-label="Twitter share"
             className="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-600 hover:text-white transition-colors"
             aria-label="Share on Twitter"
           >
@@ -71,6 +66,8 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleShareClick('reddit')}
+            data-analytics-event="share_click"
+            data-analytics-label="Reddit share"
             className="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-orange-600 hover:text-white transition-colors"
             aria-label="Share on Reddit"
           >
@@ -82,6 +79,8 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleShareClick('facebook')}
+            data-analytics-event="share_click"
+            data-analytics-label="Facebook share"
             className="hidden sm:flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-700 hover:text-white transition-colors"
             aria-label="Share on Facebook"
           >
@@ -93,6 +92,8 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleShareClick('linkedin')}
+            data-analytics-event="share_click"
+            data-analytics-label="LinkedIn share"
             className="hidden sm:flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-blue-800 hover:text-white transition-colors"
             aria-label="Share on LinkedIn"
           >
@@ -102,6 +103,8 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
           {canShare && (
             <button
               onClick={handleNativeShare}
+              data-analytics-event="share_click"
+              data-analytics-label="Native share"
               className="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
               aria-label="Share via device"
             >
@@ -114,4 +117,3 @@ export function SocialShare({ url, title, description }: SocialShareProps) {
     </div>
   );
 }
-

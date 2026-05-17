@@ -15,7 +15,7 @@ Create a `.env` file in the root directory with the following content:
 ```bash
 # App Configuration
 NEXT_PUBLIC_DOMAIN="fixmycredit.fyi"
-NEXT_PUBLIC_SITE_NAME="RepairMyCredit"
+NEXT_PUBLIC_SITE_NAME="FixMyCredit"
 NODE_ENV="development"
 
 # Database URL - You'll need to replace this with your actual database
@@ -167,4 +167,3 @@ When you're ready to deploy:
 - Check the main [README.md](./README.md) for detailed documentation
 - Review the [Product Requirements Document](./.cursor/Product%20Requirements%20Document%20(PRD).md)
 - Review the [Technical Documentation](./.cursor/Technical%20Documentation.md)
-

@@ -41,6 +41,8 @@ export function HeroSection() {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={scrollToWaitlist}
+              data-analytics-event="cta_click"
+              data-analytics-label="Hero join waitlist"
               className="group inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
             >
               Join Waitlist

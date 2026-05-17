@@ -10,6 +10,12 @@ export interface BlogPost {
     alt: string;
   };
   content: PortableTextBlock[];
+  keyTakeaways?: string[];
+  sources?: SourceLink[];
+  reviewer?: Author;
+  reviewedAt?: string;
+  updateNote?: string;
+  faqs?: ArticleFAQ[];
   author: Author;
   categories: Category[];
   tags: string[];
@@ -21,6 +27,17 @@ export interface BlogPost {
   featured: boolean;
   redditOptimized: boolean;
   structuredDataType: 'Article' | 'HowTo' | 'FAQPage';
+}
+
+export interface SourceLink {
+  title: string;
+  url: string;
+  publisher?: string;
+}
+
+export interface ArticleFAQ {
+  question: string;
+  answer: string;
 }
 
 export interface Author {
@@ -82,4 +99,3 @@ export interface CreditTool {
   category: 'calculator' | 'generator' | 'simulator' | 'tracker';
   featured: boolean;
 }
-

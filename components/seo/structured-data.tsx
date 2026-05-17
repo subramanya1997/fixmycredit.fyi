@@ -29,6 +29,17 @@ export function StructuredData({ post }: StructuredDataProps) {
         url: `${siteConfig.domain.url}/icon.svg`,
       },
     },
+    ...(post.reviewer && {
+      reviewedBy: {
+        '@type': 'Person',
+        name: post.reviewer.name,
+      },
+    }),
+    ...(post.sources && post.sources.length > 0 && {
+      citation: post.sources.map((source) => source.url),
+    }),
+    isAccessibleForFree: true,
+    inLanguage: 'en-US',
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${siteConfig.domain.url}/blog/${post.slug.current}`,
@@ -61,6 +72,19 @@ export function StructuredData({ post }: StructuredDataProps) {
     ],
   };
 
+  const faqSchema = post.faqs && post.faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: post.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  } : null;
+
   return (
     <>
       <script
@@ -71,7 +95,12 @@ export function StructuredData({ post }: StructuredDataProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
     </>
   );
 }
-

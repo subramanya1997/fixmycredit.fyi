@@ -1,21 +1,36 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getAllBlogPosts, getAllCategories, getFeaturedPosts } from '@/lib/sanity/queries';
-import { urlFor } from '@/lib/sanity/client';
 import { BlogPost, Category } from '@/lib/sanity/types';
 import { siteConfig } from '@/lib/config/site';
-import { formatDate, calculateReadingTime } from '@/lib/utils/blog-helpers';
+import { formatDate } from '@/lib/utils/blog-helpers';
 import { Header } from '@/components/marketing/header';
 
 export const metadata: Metadata = {
   title: 'Credit Repair Blog - Expert Tips & Guides',
   description: 'Learn how to improve your credit score with expert tips, guides, and strategies. Get insights on credit repair, dispute letters, and financial wellness.',
+  alternates: {
+    canonical: `${siteConfig.domain.url}/blog`,
+  },
   openGraph: {
     title: 'Credit Repair Blog - Expert Tips & Guides',
     description: 'Learn how to improve your credit score with expert tips, guides, and strategies.',
     url: `${siteConfig.domain.url}/blog`,
     type: 'website',
+    images: [
+      {
+        url: `/api/og?title=${encodeURIComponent('Credit Repair Blog')}`,
+        width: 1200,
+        height: 630,
+        alt: 'Credit Repair Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Credit Repair Blog - Expert Tips & Guides',
+    description: 'Learn how to improve your credit score with expert tips, guides, and strategies.',
+    images: [`/api/og?title=${encodeURIComponent('Credit Repair Blog')}`],
   },
 };
 
@@ -158,4 +173,3 @@ export default async function BlogPage() {
     </div>
   );
 }
-

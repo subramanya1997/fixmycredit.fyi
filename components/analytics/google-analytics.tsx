@@ -21,10 +21,10 @@ export function GoogleAnalytics() {
           gtag('js', new Date());
           gtag('config', '${measurementId}', {
             page_path: window.location.pathname,
+            send_page_view: false,
           });
         `}
       </Script>
     </>
   );
 }
-

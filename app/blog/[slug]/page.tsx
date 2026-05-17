@@ -10,21 +10,32 @@ import { siteConfig } from '@/lib/config/site';
 import { formatDate, calculateReadingTime } from '@/lib/utils/blog-helpers';
 import { portableTextComponents } from '@/components/blog/portable-text-components';
 import { SocialShare } from '@/components/blog/social-share';
+import { BlogAnalytics } from '@/components/blog/blog-analytics';
 import { StructuredData } from '@/components/seo/structured-data';
 import { Header } from '@/components/marketing/header';
+import type { BlogPost, Category } from '@/lib/sanity/types';
+
+type SitemapPost = {
+  slug: string;
+};
+
+type RelatedPost = Pick<
+  BlogPost,
+  '_id' | 'title' | 'slug' | 'excerpt' | 'mainImage' | 'publishedAt'
+>;
 
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-  const posts = await getAllPostsForSitemap();
-  return posts.map((post: any) => ({
+  const posts = (await getAllPostsForSitemap()) as SitemapPost[];
+  return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = (await getBlogPostBySlug(slug)) as BlogPost | null;
   
   if (!post) {
     return {
@@ -35,6 +46,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = post.seoTitle || post.title;
   const description = post.seoDescription || post.excerpt;
   const imageUrl = post.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : undefined;
+  const fallbackImageUrl = `/api/og?title=${encodeURIComponent(title)}&category=${encodeURIComponent(post.categories?.[0]?.title || 'Credit Repair')}&author=${encodeURIComponent(post.author.name)}`;
+  const socialImageUrl = imageUrl || fallbackImageUrl;
 
   return {
     title,
@@ -49,13 +62,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt || post.publishedAt,
       authors: [post.author.name],
-      images: imageUrl ? [{ url: imageUrl, alt: post.mainImage.alt }] : undefined,
+      images: [{ url: socialImageUrl, alt: post.mainImage?.alt || title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: imageUrl ? [imageUrl] : undefined,
+      images: [socialImageUrl],
     },
     alternates: {
       canonical: `${siteConfig.domain.url}/blog/${slug}`,
@@ -65,17 +78,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = (await getBlogPostBySlug(slug)) as BlogPost | null;
   
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(post._id, post.tags, 3);
+  const relatedPosts = (await getRelatedPosts(post._id, post.tags || [], 3)) as RelatedPost[];
   const readingTime = calculateReadingTime(post.content);
 
   return (
     <>
+      <BlogAnalytics title={post.title} slug={slug} />
+
       {/* Structured Data */}
       <StructuredData post={post} />
 
@@ -100,7 +115,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {/* Categories */}
           {post.categories && post.categories.length > 0 && (
             <div className="flex gap-2 mb-6">
-              {post.categories.map((category: any, index: number) => {
+              {post.categories.map((category: Category, index: number) => {
                 const bgColor = category.color || '#e2e8f0';
                 return (
                   <Link
@@ -145,6 +160,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
             <div className="ml-auto text-sm text-slate-600 dark:text-slate-400">
               <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+              {post.updatedAt && post.updatedAt !== post.publishedAt && (
+                <>
+                  <span className="mx-2">•</span>
+                  <span>Updated {formatDate(post.updatedAt)}</span>
+                </>
+              )}
               <span className="mx-2">•</span>
               <span>{readingTime} min read</span>
             </div>
@@ -165,8 +186,67 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           {/* Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none">
+            <div className="not-prose mb-8 rounded-lg border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100">
+              Educational content only. Credit reporting, disputes, and debt decisions can carry
+              legal or financial consequences. Verify all facts in your own credit reports and
+              consult a qualified professional for legal, tax, financial, or credit counseling advice.
+            </div>
+            {post.keyTakeaways && post.keyTakeaways.length > 0 && (
+              <div className="not-prose mb-8 rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Key Takeaways
+                </h2>
+                <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                  {post.keyTakeaways.map((takeaway) => (
+                    <li key={takeaway} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-600" />
+                      <span>{takeaway}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <PortableText value={post.content} components={portableTextComponents} />
           </div>
+
+          {post.faqs && post.faqs.length > 0 && (
+            <section className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Common Questions</h2>
+              <div className="mt-6 space-y-5">
+                {post.faqs.map((faq) => (
+                  <div key={faq.question}>
+                    <h3 className="font-semibold text-slate-900 dark:text-white">{faq.question}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                      {faq.answer}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {post.sources && post.sources.length > 0 && (
+            <section className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Sources</h2>
+              <ul className="mt-5 space-y-3 text-sm">
+                {post.sources.map((source) => (
+                  <li key={source.url}>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                    >
+                      {source.title}
+                    </a>
+                    {source.publisher && (
+                      <span className="text-slate-500 dark:text-slate-400"> - {source.publisher}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
@@ -217,6 +297,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 )}
                 {post.author.bio && (
                   <p className="text-slate-700 dark:text-slate-300">{post.author.bio}</p>
+                )}
+                <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+                  Content is reviewed against available source material and updated when credit
+                  bureau, score model, or consumer protection guidance changes.
+                </p>
+                {post.reviewer && (
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                    Reviewed by {post.reviewer.name}
+                    {post.reviewedAt ? ` on ${formatDate(post.reviewedAt)}` : ''}.
+                  </p>
                 )}
                 {post.author.social && (
                   <div className="flex gap-4 mt-4">
@@ -276,7 +366,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 Related Articles
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedPosts.map((relatedPost: any) => (
+                {relatedPosts.map((relatedPost) => (
                   <article key={relatedPost._id} className="group bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <Link href={`/blog/${relatedPost.slug.current}`}>
                       <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800">
@@ -313,4 +403,3 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     </>
   );
 }
-

@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { FeaturesSection } from "@/components/marketing/features-section";
 import { PricingSection } from "@/components/marketing/pricing-section";
 import { WaitlistForm } from "@/components/marketing/waitlist-form";
 import { BlogCTA } from "@/components/marketing/blog-cta";
 import { Footer } from "@/components/marketing/footer";
+import { siteConfig } from "@/lib/config/site";
+import { FaqSection } from "@/components/marketing/faq-section";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: siteConfig.domain.url,
+  },
+};
 
 export default function Home() {
   return (
@@ -19,6 +28,9 @@ export default function Home() {
 
       {/* Pricing Section */}
       <PricingSection />
+
+      {/* FAQ Section */}
+      <FaqSection />
 
       {/* Waitlist Section */}
       <section

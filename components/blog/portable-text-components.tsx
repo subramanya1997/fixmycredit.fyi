@@ -1,7 +1,12 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { PortableTextComponents } from '@portabletext/react';
 import { urlFor } from '@/lib/sanity/client';
+
+type TableValue = {
+  rows?: {
+    cells?: string[];
+  }[];
+};
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
@@ -34,13 +39,14 @@ export const portableTextComponents: PortableTextComponents = {
       );
     },
     table: ({ value }) => {
-      if (!value?.rows) return null;
+      const table = value as TableValue;
+      if (!table.rows) return null;
       
       return (
         <div className="my-8 overflow-x-auto">
           <table className="w-full border-collapse border border-slate-300 dark:border-slate-700">
             <tbody>
-              {value.rows.map((row: any, rowIndex: number) => (
+              {table.rows.map((row, rowIndex) => (
                 <tr key={rowIndex} className="border-b border-slate-300 dark:border-slate-700">
                   {row.cells?.map((cell: string, cellIndex: number) => (
                     <td
@@ -134,4 +140,3 @@ export const portableTextComponents: PortableTextComponents = {
     ),
   },
 };
-

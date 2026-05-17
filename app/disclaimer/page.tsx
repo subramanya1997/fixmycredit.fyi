@@ -7,6 +7,9 @@ import { siteConfig } from "@/lib/config/site";
 export const metadata: Metadata = {
   title: "Disclaimer - " + siteConfig.branding.name,
   description: "Disclaimer for " + siteConfig.branding.name,
+  alternates: {
+    canonical: `${siteConfig.domain.url}/disclaimer`,
+  },
 };
 
 export default function DisclaimerPage() {
@@ -89,7 +92,7 @@ export default function DisclaimerPage() {
           <h2>Changes to This Disclaimer</h2>
           <p>
             We may update this Disclaimer from time to time. We will notify you of any changes by posting the new
-            Disclaimer on this page and updating the "Last updated" date.
+            Disclaimer on this page and updating the &quot;Last updated&quot; date.
           </p>
 
           <h2>Professional Advice</h2>
@@ -120,4 +123,3 @@ export default function DisclaimerPage() {
     </div>
   );
 }
-

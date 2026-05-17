@@ -1,5 +1,24 @@
 import { PortableTextBlock } from '@portabletext/react';
 
+type TextChild = {
+  text?: string;
+};
+
+type TextBlock = PortableTextBlock & {
+  children?: TextChild[];
+};
+
+function extractPlainText(content: PortableTextBlock[]): string {
+  return content
+    .filter((block): block is TextBlock => block._type === 'block')
+    .map((block) =>
+      block.children?.map((child) => child.text || '').join(' ') || ''
+    )
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -12,12 +31,7 @@ export function formatDate(dateString: string): string {
 export function calculateReadingTime(content: PortableTextBlock[]): number {
   if (!content || !Array.isArray(content)) return 5;
   
-  const text = content
-    .filter((block) => block._type === 'block')
-    .map((block: any) => 
-      block.children?.map((child: any) => child.text).join(' ') || ''
-    )
-    .join(' ');
+  const text = extractPlainText(content);
   
   const wordsPerMinute = 200;
   const wordCount = text.split(/\s+/).length;
@@ -34,15 +48,7 @@ export function truncateText(text: string, maxLength: number): string {
 export function generateExcerpt(content: PortableTextBlock[], maxLength = 160): string {
   if (!content || !Array.isArray(content)) return '';
   
-  const text = content
-    .filter((block) => block._type === 'block')
-    .map((block: any) => 
-      block.children?.map((child: any) => child.text).join(' ') || ''
-    )
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const text = extractPlainText(content);
   
   return truncateText(text, maxLength);
 }
-

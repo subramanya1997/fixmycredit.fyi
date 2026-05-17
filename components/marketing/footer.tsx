@@ -1,4 +1,4 @@
-import { Github, Twitter, Linkedin } from "lucide-react";
+import Link from "next/link";
 import { siteConfig } from "@/lib/config/site";
 
 export function Footer() {
@@ -16,35 +16,6 @@ export function Footer() {
             <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xs">
               Data-driven credit repair for everyone. Fix your credit score the smart way.
             </p>
-            <div className="mt-6 flex gap-4">
-              <a
-                href={siteConfig.social.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
-              >
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a
-                href={siteConfig.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
-              >
-                <Linkedin className="h-5 w-5" />
-                <span className="sr-only">LinkedIn</span>
-              </a>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
-              >
-                <Github className="h-5 w-5" />
-                <span className="sr-only">GitHub</span>
-              </a>
-            </div>
           </div>
 
           {/* Product */}
@@ -54,36 +25,44 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a
-                  href="#features"
+                <Link
+                  href="/#features"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#pricing"
+                <Link
+                  href="/#pricing"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
+                  href="/tools"
+                  className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                >
+                  Tools
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/blog"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#waitlist"
+                <Link
+                  href="/#waitlist"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Join Waitlist
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -95,28 +74,44 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a
+                <Link
+                  href="/about"
+                  className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/editorial-policy"
+                  className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                >
+                  Editorial Policy
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/privacy"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/terms"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/disclaimer"
                   className="text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 >
                   Disclaimer
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

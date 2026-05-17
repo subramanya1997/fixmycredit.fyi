@@ -7,6 +7,9 @@ import { siteConfig } from "@/lib/config/site";
 export const metadata: Metadata = {
   title: "Privacy Policy - " + siteConfig.branding.name,
   description: "Privacy policy for " + siteConfig.branding.name,
+  alternates: {
+    canonical: `${siteConfig.domain.url}/privacy`,
+  },
 };
 
 export default function PrivacyPage() {
@@ -62,7 +65,7 @@ export default function PrivacyPage() {
             services may collect information sent by your browser as part of a web page request.
           </p>
 
-          <h2>Children's Privacy</h2>
+          <h2>Children&apos;s Privacy</h2>
           <p>
             Our Service is not intended for individuals under the age of 18. We do not knowingly collect personal
             information from children under 18.
@@ -71,7 +74,7 @@ export default function PrivacyPage() {
           <h2>Changes to This Privacy Policy</h2>
           <p>
             We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new
-            Privacy Policy on this page and updating the "Last updated" date.
+            Privacy Policy on this page and updating the &quot;Last updated&quot; date.
           </p>
 
           <h2>Contact Us</h2>
@@ -95,4 +98,3 @@ export default function PrivacyPage() {
     </div>
   );
 }
-

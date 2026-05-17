@@ -1,7 +1,7 @@
 /**
  * Site Configuration
  * 
- * Central configuration for the RepairMyCredit platform
+ * Central configuration for the FixMyCredit platform
  */
 
 export const siteConfig = {
@@ -21,7 +21,7 @@ export const siteConfig = {
 
   // Branding
   branding: {
-    name: process.env.NEXT_PUBLIC_SITE_NAME || "fixmycredit.fyi",
+    name: process.env.NEXT_PUBLIC_SITE_NAME || "FixMyCredit",
     tagline: "Fix Your Credit Score The Smart Way",
     description: "Take control of your financial future with our intelligent credit repair platform. Get personalized guidance, dispute templates, and real-time score tracking.",
   },
@@ -29,8 +29,8 @@ export const siteConfig = {
   // SEO
   seo: {
     title: {
-      default: "fixmycredit.fyi - Credit Score Repair Platform",
-      template: "%s | fixmycredit.fyi",
+      default: "FixMyCredit - Credit Score Repair Platform",
+      template: "%s | FixMyCredit",
     },
     description: "Improve your credit score with data-driven insights, professional dispute templates, and personalized action plans. Start your credit repair journey today.",
     keywords: [
@@ -50,13 +50,6 @@ export const siteConfig = {
     adminEmail: process.env.ADMIN_EMAIL || "admin@fixmycredit.fyi",
   },
 
-  // Social Media
-  social: {
-    twitter: "https://twitter.com/repairmycredit",
-    facebook: "https://facebook.com/repairmycredit",
-    linkedin: "https://linkedin.com/company/repairmycredit",
-  },
-
   // Pricing
   pricing: {
     monthly: {
@@ -73,4 +66,3 @@ export const siteConfig = {
 } as const;
 
 export type SiteConfig = typeof siteConfig;
-

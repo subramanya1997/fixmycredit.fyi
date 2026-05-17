@@ -132,6 +132,62 @@ export const blogPost = defineType({
       ],
     }),
     defineField({
+      name: 'keyTakeaways',
+      title: 'Key Takeaways',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Short answer-first bullets shown near the top of the article',
+      validation: (Rule) => Rule.max(6),
+    }),
+    defineField({
+      name: 'sources',
+      title: 'Sources',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'title', title: 'Source Title', type: 'string', validation: (Rule) => Rule.required() },
+            { name: 'url', title: 'Source URL', type: 'url', validation: (Rule) => Rule.required() },
+            { name: 'publisher', title: 'Publisher', type: 'string' },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'reviewer',
+      title: 'Reviewer',
+      type: 'reference',
+      to: [{ type: 'author' }],
+      description: 'Optional reviewer or fact checker for finance-adjacent content',
+    }),
+    defineField({
+      name: 'reviewedAt',
+      title: 'Reviewed At',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'updateNote',
+      title: 'Update Note',
+      type: 'text',
+      rows: 2,
+      description: 'Brief explanation of material updates',
+    }),
+    defineField({
+      name: 'faqs',
+      title: 'Article FAQs',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'question', title: 'Question', type: 'string', validation: (Rule) => Rule.required() },
+            { name: 'answer', title: 'Answer', type: 'text', rows: 3, validation: (Rule) => Rule.required() },
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'publishedAt',
       title: 'Published At',
       type: 'datetime',
@@ -226,4 +282,3 @@ export const blogPost = defineType({
     },
   },
 });
-

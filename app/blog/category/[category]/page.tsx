@@ -11,9 +11,45 @@ import { Header } from '@/components/marketing/header';
 
 export const revalidate = 3600;
 
+type CategoryParam = {
+  slug: {
+    current: string;
+  };
+};
+
+const categoryHubCopy: Record<string, { intro: string; questions: string[] }> = {
+  'credit-scores': {
+    intro:
+      'Credit score articles explain how scoring factors work, why different models can show different numbers, and which habits tend to matter most across FICO and VantageScore.',
+    questions: [
+      'Which score factor is likely causing the largest drag?',
+      'Did the balance, inquiry, or account age change recently?',
+      'Is the score being used for a mortgage, card, auto loan, or general monitoring?',
+    ],
+  },
+  'credit-education': {
+    intro:
+      'Credit education guides focus on the mechanics behind credit reports, bureau data, dispute rights, and common myths that can lead people into risky credit repair decisions.',
+    questions: [
+      'Is the information inaccurate, incomplete, outdated, or unverifiable?',
+      'What documents support the correction request?',
+      'Which bureau is reporting the issue?',
+    ],
+  },
+  'personal-finance': {
+    intro:
+      'Personal finance content connects credit scores to budgeting, debt payoff, borrowing readiness, and financial decisions that can affect a credit file over time.',
+    questions: [
+      'Will the action reduce risk or only move a score temporarily?',
+      'Does the decision improve cash flow as well as credit profile?',
+      'Could the action create new fees, inquiries, or account closures?',
+    ],
+  },
+};
+
 export async function generateStaticParams() {
-  const categories = await getAllCategories();
-  return categories.map((category: any) => ({
+  const categories = (await getAllCategories()) as CategoryParam[];
+  return categories.map((category) => ({
     category: category.slug.current,
   }));
 }
@@ -31,10 +67,27 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   return {
     title: `${category.title} - Credit Repair Blog`,
     description: category.description || `Articles about ${category.title.toLowerCase()} and credit repair`,
+    alternates: {
+      canonical: `${siteConfig.domain.url}/blog/category/${categorySlug}`,
+    },
     openGraph: {
       title: `${category.title} - Credit Repair Blog`,
       description: category.description,
       url: `${siteConfig.domain.url}/blog/category/${categorySlug}`,
+      images: [
+        {
+          url: `/api/og?title=${encodeURIComponent(category.title)}&category=${encodeURIComponent('Credit Repair')}`,
+          width: 1200,
+          height: 630,
+          alt: `${category.title} credit repair articles`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${category.title} - Credit Repair Blog`,
+      description: category.description || `Articles about ${category.title.toLowerCase()} and credit repair`,
+      images: [`/api/og?title=${encodeURIComponent(category.title)}&category=${encodeURIComponent('Credit Repair')}`],
     },
   };
 }
@@ -84,6 +137,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           </div>
         </div>
       </section>
+
+      {categoryHubCopy[categorySlug] && (
+        <section className="border-b border-slate-200 bg-white py-10 dark:border-slate-800 dark:bg-slate-900">
+          <div className="mx-auto max-w-4xl px-6 lg:px-8">
+            <p className="text-base leading-7 text-slate-700 dark:text-slate-300">
+              {categoryHubCopy[categorySlug].intro}
+            </p>
+            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+              <h2 className="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">
+                Questions to answer first
+              </h2>
+              <ul className="mt-4 space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                {categoryHubCopy[categorySlug].questions.map((question) => (
+                  <li key={question}>- {question}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Posts */}
       <section className="py-16">
@@ -140,4 +213,3 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     </div>
   );
 }
-

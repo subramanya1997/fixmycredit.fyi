@@ -18,11 +18,6 @@ export function OrganizationSchema() {
       areaServed: 'US',
       availableLanguage: 'en',
     },
-    sameAs: [
-      siteConfig.social.twitter,
-      siteConfig.social.facebook,
-      siteConfig.social.linkedin,
-    ],
   };
 
   return (
@@ -32,4 +27,3 @@ export function OrganizationSchema() {
     />
   );
 }
-

@@ -16,16 +16,7 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/',
         ],
       },
-      {
-        userAgent: 'GPTBot',
-        disallow: ['/'],
-      },
-      {
-        userAgent: 'ChatGPT-User',
-        disallow: ['/'],
-      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
-

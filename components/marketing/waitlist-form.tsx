@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { waitlistSchema, type WaitlistFormData } from "@/lib/validations";
-import { trackWaitlistSignup } from "@/lib/analytics/gtag";
+import {
+  trackWaitlistError,
+  trackWaitlistFormStart,
+  trackWaitlistSignup,
+  trackWaitlistSubmit,
+} from "@/lib/analytics/gtag";
 
 export function WaitlistForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const hasStartedForm = useRef(false);
 
   const {
     register,
@@ -21,9 +27,16 @@ export function WaitlistForm() {
     resolver: zodResolver(waitlistSchema),
   });
 
+  const trackFormStartOnce = () => {
+    if (hasStartedForm.current) return;
+    hasStartedForm.current = true;
+    trackWaitlistFormStart();
+  };
+
   const onSubmit = async (data: WaitlistFormData) => {
     setIsSubmitting(true);
     setErrorMessage(null);
+    trackWaitlistSubmit();
 
     try {
       const response = await fetch("/api/waitlist", {
@@ -39,10 +52,12 @@ export function WaitlistForm() {
       if (!response.ok) {
         if (result.error?.code === "EMAIL_EXISTS") {
           setErrorMessage("You're already on our waitlist! We'll be in touch soon.");
+          trackWaitlistError("email_exists");
         } else {
           setErrorMessage(
             result.error?.message || "Something went wrong. Please try again."
           );
+          trackWaitlistError(result.error?.code || "request_failed");
         }
         return;
       }
@@ -51,14 +66,19 @@ export function WaitlistForm() {
       setIsSuccess(true);
       reset();
       
-      // Track conversion in Google Analytics
-      trackWaitlistSignup(data.email);
+      // Track conversion in Google Analytics without sending PII.
+      trackWaitlistSignup();
     } catch (error) {
       console.error("Error submitting waitlist form:", error);
       setErrorMessage("Failed to submit. Please try again.");
+      trackWaitlistError("network_or_server_error");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const onInvalid = () => {
+    trackWaitlistError("validation_error");
   };
 
   if (isSuccess) {
@@ -68,13 +88,15 @@ export function WaitlistForm() {
           <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
         </div>
         <h3 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">
-          You're on the list!
+          You&apos;re on the list!
         </h3>
         <p className="mb-6 text-slate-600 dark:text-slate-400">
-          Check your inbox for a confirmation email. We'll notify you as soon as we launch.
+          Check your inbox for a confirmation email. We&apos;ll notify you as soon as we launch.
         </p>
         <button
           onClick={() => setIsSuccess(false)}
+          data-analytics-event="cta_click"
+          data-analytics-label="Add another email"
           className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         >
           Add another email
@@ -85,7 +107,11 @@ export function WaitlistForm() {
 
   return (
     <div className="mx-auto max-w-md">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        onFocusCapture={trackFormStartOnce}
+        className="space-y-4"
+      >
         {/* Name field */}
         <div>
           <label
@@ -143,6 +169,8 @@ export function WaitlistForm() {
         <button
           type="submit"
           disabled={isSubmitting}
+          data-analytics-event="cta_click"
+          data-analytics-label="Join waitlist form submit"
           className="w-full rounded-xl bg-slate-900 px-6 py-3.5 font-semibold text-white shadow-lg transition-all hover:bg-slate-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
         >
           {isSubmitting ? (

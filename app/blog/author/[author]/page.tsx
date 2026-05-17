@@ -11,9 +11,15 @@ import { Header } from '@/components/marketing/header';
 
 export const revalidate = 3600;
 
+type AuthorParam = {
+  slug: {
+    current: string;
+  };
+};
+
 export async function generateStaticParams() {
-  const authors = await getAllAuthors();
-  return authors.map((author: any) => ({
+  const authors = (await getAllAuthors()) as AuthorParam[];
+  return authors.map((author) => ({
     author: author.slug.current,
   }));
 }
@@ -31,10 +37,27 @@ export async function generateMetadata({ params }: { params: Promise<{ author: s
   return {
     title: `${author.name} - Credit Repair Expert`,
     description: author.bio || `Articles by ${author.name}`,
+    alternates: {
+      canonical: `${siteConfig.domain.url}/blog/author/${authorSlug}`,
+    },
     openGraph: {
       title: `${author.name} - Credit Repair Expert`,
       description: author.bio,
       url: `${siteConfig.domain.url}/blog/author/${authorSlug}`,
+      images: [
+        {
+          url: `/api/og?title=${encodeURIComponent(author.name)}&category=${encodeURIComponent('Author')}`,
+          width: 1200,
+          height: 630,
+          alt: `${author.name} author profile`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${author.name} - Credit Repair Expert`,
+      description: author.bio || `Articles by ${author.name}`,
+      images: [`/api/og?title=${encodeURIComponent(author.name)}&category=${encodeURIComponent('Author')}`],
     },
   };
 }
@@ -213,4 +236,3 @@ export default async function AuthorPage({ params }: { params: Promise<{ author:
     </div>
   );
 }
-

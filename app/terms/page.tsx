@@ -7,6 +7,9 @@ import { siteConfig } from "@/lib/config/site";
 export const metadata: Metadata = {
   title: "Terms of Service - " + siteConfig.branding.name,
   description: "Terms of service for " + siteConfig.branding.name,
+  alternates: {
+    canonical: `${siteConfig.domain.url}/terms`,
+  },
 };
 
 export default function TermsPage() {
@@ -57,7 +60,7 @@ export default function TermsPage() {
 
           <h2>6. Disclaimer of Warranties</h2>
           <p>
-            The service is provided "as is" without warranties of any kind, either express or implied. We do not
+            The service is provided &quot;as is&quot; without warranties of any kind, either express or implied. We do not
             guarantee that the service will be uninterrupted, secure, or error-free.
           </p>
 
@@ -71,7 +74,7 @@ export default function TermsPage() {
           <h2>8. Payment and Refunds</h2>
           <p>
             Subscription fees, when applicable, will be clearly stated. We offer a satisfaction guarantee - if
-            you're not satisfied within the first 30 days, contact us for a full refund.
+            you&apos;re not satisfied within the first 30 days, contact us for a full refund.
           </p>
 
           <h2>9. Termination</h2>
@@ -113,4 +116,3 @@ export default function TermsPage() {
     </div>
   );
 }
-

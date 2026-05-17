@@ -28,6 +28,19 @@ export async function getBlogPostBySlug(slug: string) {
     excerpt,
     mainImage,
     content,
+    keyTakeaways,
+    sources,
+    "reviewer": reviewer->{
+      name,
+      slug,
+      avatar,
+      bio,
+      role,
+      credentials
+    },
+    reviewedAt,
+    updateNote,
+    faqs,
     "author": author->{
       name,
       slug,
@@ -110,6 +123,25 @@ export async function getFeaturedPosts(limit = 3) {
   }`;
   
   return await sanityClient.fetch(query);
+}
+
+export async function searchBlogPosts(searchTerm: string, limit = 10) {
+  const query = `*[_type == "blogPost" && (
+    title match $searchQuery ||
+    excerpt match $searchQuery ||
+    count(tags[@ match $searchQuery]) > 0
+  )] | order(publishedAt desc) [0...${limit}] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage,
+    "author": author->{name, slug},
+    "categories": categories[]->{title, slug, color},
+    publishedAt
+  }`;
+
+  return await sanityClient.fetch(query, { searchQuery: `${searchTerm}*` });
 }
 
 // Category Queries
@@ -263,4 +295,3 @@ export async function getAllPostsForSitemap() {
   
   return await sanityClient.fetch(query);
 }
-
